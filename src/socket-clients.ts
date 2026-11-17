@@ -15,6 +15,7 @@ const addListeners = (socket: Socket) => {
     const clientsUl = document.querySelector<HTMLUListElement>("#clients-ul")!;
     const messageForm = document.querySelector<HTMLFormElement>("#message-form")!;
     const messageInput = document.querySelector<HTMLInputElement>("#message-input")!;
+    const messagesUl = document.querySelector<HTMLUListElement>("#messages-ul")!;
 
     // escuchar el evento 'connect' que envia el servidor cuando se conecta el cliente
     socket.on('connect', () => {
@@ -60,5 +61,16 @@ const addListeners = (socket: Socket) => {
         });
 
         messageInput.value = ''; // Limpiar el input después de enviar el mensaje
+    });
+
+    socket.on('message-from-server', (payload: { fullName: string, message: string }) => {
+        const newMessage = `
+            <li>
+                <strong>${payload.fullName}</strong>: ${payload.message}
+            </li>
+        `;
+        const li = document.createElement('li');
+        li.innerHTML = newMessage;
+        messagesUl.appendChild(li);
     });
 }
